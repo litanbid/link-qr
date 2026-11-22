@@ -1,0 +1,36 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm test
+      - name: Install the actual npm package
+        run: |
+          package_dir="$(mktemp -d)"
+          tarball="$(npm pack --pack-destination "$package_dir" --json | node -e 'console.log(JSON.parse(require("node:fs").readFileSync(0, "utf8"))[0].filename)')"
+          cd "$package_dir"
+          npm install --ignore-scripts --no-audit "./$tarball"
+          ./node_modules/.bin/link-qr --help
+          PORT=3031 ./node_modules/.bin/link-qr serve &
+          trap 'kill "$!"' EXIT
+          curl --fail --silent --show-error --retry 5 --retry-connrefused http://127.0.0.1:3031/healthz
+          curl --fail --silent --show-error http://127.0.0.1:3031/ > /dev/null
+      - run: docker compose up -d --build --wait
+      - name: Check the Docker service
+        run: curl --fail --silent --show-error http://127.0.0.1:3000/healthz
+      - if: always()
+        run: docker compose down

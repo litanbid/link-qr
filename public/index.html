@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="웹 주소를 QR 코드로 만들어 PNG로 다운로드하세요.">
+  <title>LinkQR — URL을 QR 코드로</title>
+  <link rel="stylesheet" href="/style.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <main class="tool">
+    <section class="editor" aria-labelledby="title">
+      <p class="wordmark">LinkQR</p>
+      <h1 id="title">웹 주소를<br>QR 코드로.</h1>
+      <p class="intro">주소를 붙여넣고, 스캔하거나 PNG로 다운로드하세요.</p>
+      <form id="form" novalidate>
+        <label for="url">웹페이지 URL</label>
+        <input id="url" type="url" inputmode="url" autocomplete="off"
+          spellcheck="false" placeholder="https://example.com" required aria-describedby="error">
+        <p id="error" class="error" role="alert"></p>
+        <button id="generate" type="submit">QR 생성</button>
+      </form>
+      <noscript>QR 코드를 생성하려면 JavaScript를 활성화하세요.</noscript>
+    </section>
+    <section class="result" aria-labelledby="preview-heading">
+      <h2 id="preview-heading">미리보기</h2>
+      <div class="preview" id="preview">
+        <p id="empty">생성한 QR 코드가 여기에 표시됩니다.</p>
+        <img id="qr" width="512" height="512" alt="생성된 QR 코드" hidden>
+      </div>
+      <p id="status" class="sr-only" role="status"></p>
+      <a class="download" id="download" download="link-qr.png" hidden>PNG 다운로드</a>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,71 @@
+:root {
+  color-scheme: light;
+  font-family: system-ui, -apple-system, sans-serif;
+  color: #132c25;
+  background: #eaf4ee;
+  font-synthesis: none;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; }
+.tool {
+  display: grid;
+  grid-template-columns: 1.1fr minmax(16rem, 0.9fr);
+  gap: clamp(1.5rem, 5vw, 4.5rem);
+  width: min(100% - 2rem, 63rem);
+  margin: clamp(1rem, 9vh, 7rem) auto;
+  padding: clamp(1.25rem, 5vw, 4rem);
+  border: 1px solid #cfdfd5;
+  border-radius: 1.5rem;
+  background: #fff;
+  box-shadow: 0 1.5rem 4rem #163d2912;
+}
+.wordmark { margin: 0 0 1.75rem; color: #216344; font-size: 1.125rem; font-weight: 800; }
+h1 { margin: 0; font-size: clamp(2.5rem, 6.5vw, 4.75rem); line-height: 1.08; letter-spacing: -.055em; }
+.intro { margin: 1rem 0 1.75rem; color: #4c6258; line-height: 1.65; word-break: keep-all; }
+label { display: block; margin-bottom: .5rem; font-weight: 650; }
+input, button, .download { font: inherit; border-radius: .65rem; }
+input {
+  width: 100%;
+  padding: .85rem 1rem;
+  border: 1px solid #9cb2a5;
+  background: #fff;
+}
+input[aria-invalid="true"] { border-color: #a82026; }
+.error { margin: .5rem 0; min-height: 1.4em; line-height: 1.4; color: #a82026; }
+button, .download {
+  display: block;
+  width: 100%;
+  padding: .85rem 1rem;
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  font-weight: 700;
+}
+button { background: #18583c; color: #fff; }
+button:hover { background: #12452e; }
+button:disabled { background: #5c766a; cursor: wait; }
+:focus-visible { outline: 3px solid #178652; outline-offset: 3px; }
+.result { align-self: center; min-width: 0; }
+h2 { margin: 0 0 .75rem; font-size: 1rem; }
+.preview {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border: 1px solid #cfdfd5;
+  border-radius: .9rem;
+  background: #f2f8f4;
+  text-align: center;
+}
+.preview p { margin: 1rem; color: #4c6258; word-break: keep-all; }
+.preview img { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+.download { margin-top: .75rem; border-color: #a2bcb0; color: #18583c; }
+.download:hover { background: #eaf4ee; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@media (max-width: 44rem) {
+  .tool { grid-template-columns: 1fr; }
+  .result { width: min(100%, 24rem); justify-self: center; }
+  .wordmark { margin-bottom: 1rem; }
+}

@@ -1,0 +1,36 @@
+{
+  "name": "@litanbid/link-qr",
+  "version": "0.1.0",
+  "description": "Self-hosted URL to PNG QR code generator, with a web UI and API.",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=26.13.1 <27"
+  },
+  "bin": {
+    "link-qr": "./bin/link-qr.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "public"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "start": "node bin/link-qr.js serve",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "qrcode": "1.5.4"
+  },
+  "devDependencies": {
+    "jsqr": "1.4.0",
+    "pngjs": "5.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/litanbid/link-qr.git"
+  }
+}
