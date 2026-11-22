@@ -74,3 +74,27 @@ form.addEventListener('submit', async (event) => {
     preview.removeAttribute('aria-busy');
   }
 });
+
+
+const api = document.querySelector('#api');
+const example = document.querySelector('#api-example code');
+const copy = document.querySelector('#copy-api');
+const copyStatus = document.querySelector('#copy-status');
+const endpoint = new URL('/api/v1/qr', location.href).href;
+example.textContent = example.textContent.replace('/api/v1/qr', "'" + endpoint.replaceAll("'", "'\\''") + "'");
+document.querySelector('#api-link').addEventListener('click', () => { api.open = true; });
+
+if (navigator.clipboard) {
+  copy.hidden = false;
+  copy.addEventListener('click', async () => {
+    copyStatus.textContent = '';
+    try {
+      await navigator.clipboard.writeText(example.textContent);
+      copyStatus.textContent = 'API 예제를 복사했습니다.';
+      copy.textContent = '복사됨';
+    } catch {
+      copyStatus.textContent = '복사 권한을 확인하거나 예제를 직접 선택해 복사해 주세요.';
+      copy.textContent = '직접 복사';
+    }
+  });
+}

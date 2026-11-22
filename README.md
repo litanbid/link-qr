@@ -2,6 +2,15 @@
 
 웹페이지 URL을 정적 QR 코드로 만들어 PNG로 반환하는 자체 호스팅 도구입니다. 웹에서 미리 보고 내려받거나 HTTP API를 호출할 수 있습니다. 서버는 전달받은 URL을 방문하지 않으며 URL과 생성 이미지를 저장하지 않습니다.
 
+## 화면 미리보기
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/linkqr-dark.png">
+  <img src="docs/images/linkqr-light.png" alt="LinkQR에서 URL을 입력해 QR 코드를 미리 보고 PNG로 내려받는 화면">
+</picture>
+
+[라이트 화면](docs/images/linkqr-light.png) · [다크 화면](docs/images/linkqr-dark.png)
+
 ## 실행
 
 Node.js 26 LTS의 최신 보안 패치를 사용하세요. 현재 프로젝트 기준 버전은 `.node-version`에 있습니다.
@@ -39,6 +48,19 @@ curl --fail --show-error --silent http://127.0.0.1:3000/api/v1/qr \
   -H 'Content-Type: application/json' \
   --data '{"url":"https://example.com/page?lang=ko#intro"}' \
   --output link-qr.png
+```
+
+API 응답 본문은 이미 PNG로 인코딩된 이미지 바이트입니다. cURL 예제의 `--output`은 호출한 쪽에서 바이트를 파일에 저장합니다. Node.js에서는 응답을 `Buffer`로 받아 메모리에서 바로 사용할 수 있습니다.
+
+```js
+const response = await fetch('http://127.0.0.1:3000/api/v1/qr', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ url: 'https://example.com' }),
+});
+if (!response.ok) throw new Error(`QR request failed: ${response.status}`);
+
+const pngBytes = Buffer.from(await response.arrayBuffer());
 ```
 
 입력은 UTF-8 기준 최대 1,024바이트의 절대 HTTP 또는 HTTPS URL입니다. 성공하면 512×512 PNG가 `image/png`로 반환됩니다. 오류 응답은 JSON이며 `code`와 `message`를 포함합니다. 요청 본문이 8 KiB를 초과하면 `413`, 동시 처리 한도를 넘기면 `503`을 반환합니다. 공개 프록시의 호출 제한을 초과하면 `429`를 반환하도록 설정하세요.

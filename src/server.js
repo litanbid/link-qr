@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { createServer } from 'node:http';
 import { TextDecoder } from 'node:util';
 import QRCode from 'qrcode';
+import packageInfo from '../package.json' with { type: 'json' };
 
 const MAX_BODY = 8 * 1024;
 const MAX_URL = 1024;
@@ -11,10 +12,13 @@ const assets = new Map(
   [
     ['/', 'index.html', 'text/html; charset=utf-8'],
     ['/app.js', 'app.js', 'text/javascript; charset=utf-8'],
+    ['/theme.js', 'theme.js', 'text/javascript; charset=utf-8'],
     ['/style.css', 'style.css', 'text/css; charset=utf-8'],
-  ].map(([route, file, type]) => [
-    route, { type, body: readFileSync(new URL('../public/' + file, import.meta.url)) },
-  ]),
+  ].map(([route, file, type]) => {
+    let body = readFileSync(new URL('../public/' + file, import.meta.url), 'utf8');
+    if (route === '/') body = body.replace('{{version}}', packageInfo.version);
+    return [route, { type, body }];
+  }),
 );
 
 function send(response, status, type, body, headers = {}) {
