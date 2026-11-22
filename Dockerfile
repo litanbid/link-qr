@@ -1,4 +1,4 @@
-FROM node:26.13.1-trixie-slim
+FROM node:26-trixie-slim
 ENV NODE_ENV=production HOST=0.0.0.0 PORT=3000
 WORKDIR /app
 COPY package.json package-lock.json ./
