@@ -46,7 +46,7 @@ curl --fail --silent --show-error \
 
 npm 공개 후 체험 명령은 `npm exec --package=@litanbid/link-qr@0.1.0 -- link-qr serve`를 기준으로 문서화한다.
 
-Docker 배포용 이미지는 `linux/amd64`와 `linux/arm64`를 목표로 한다. 첫 버전은 Dockerfile과 Compose로 홈서버에서 빌드한다. 미리 빌드한 이미지를 배포할 필요가 생기면 GitHub Container Registry를 검토한다. [Docker 포트 매핑](https://docs.docker.com/engine/network/port-publishing/) · [멀티 플랫폼 빌드](https://docs.docker.com/build/building/multi-platform/)
+Docker 배포용 이미지는 `linux/amd64`와 `linux/arm64`를 목표로 한다. 개발용 Compose는 소스에서 빌드한다. GitHub Actions가 GitHub Container Registry에 버전별 이미지를 게시하며, 운영용 Compose는 공개 이미지를 내려받아 실행한다. [Docker 포트 매핑](https://docs.docker.com/engine/network/port-publishing/) · [멀티 플랫폼 빌드](https://docs.docker.com/build/building/multi-platform/)
 
 ## Node.js LTS와 보안 업데이트
 

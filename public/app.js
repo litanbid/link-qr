@@ -8,6 +8,7 @@ const download = document.querySelector('#download');
 const error = document.querySelector('#error');
 const status = document.querySelector('#status');
 let imageUrl;
+let pendingRequest;
 
 function resetResult() {
   if (imageUrl) URL.revokeObjectURL(imageUrl);
@@ -20,12 +21,31 @@ function resetResult() {
   status.textContent = '';
 }
 
-form.addEventListener('submit', async (event) => {
-  event.preventDefault();
-  if (generate.disabled) return;
-
+function clearError() {
   error.textContent = '';
   input.removeAttribute('aria-invalid');
+}
+
+function setGenerating(active) {
+  generate.disabled = active;
+  generate.textContent = active ? '생성 중…' : 'QR 생성';
+  preview.setAttribute('aria-busy', String(active));
+}
+
+input.addEventListener('input', () => {
+  const previousRequest = pendingRequest;
+  pendingRequest = undefined;
+  previousRequest?.abort();
+  setGenerating(false);
+  resetResult();
+  clearError();
+});
+
+form.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  if (pendingRequest) return;
+
+  clearError();
   resetResult();
 
   const url = input.value.trim();
@@ -36,16 +56,19 @@ form.addEventListener('submit', async (event) => {
     return;
   }
 
-  generate.disabled = true;
-  generate.textContent = '생성 중…';
-  preview.setAttribute('aria-busy', 'true');
+  const request = new AbortController();
+  pendingRequest = request;
+  setGenerating(true);
+  const timeout = setTimeout(() => request.abort(), 10000);
   try {
     const response = await fetch('/api/v1/qr', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ url }),
-      signal: AbortSignal.timeout(10000),
+      signal: request.signal,
     });
+    if (pendingRequest !== request) return;
+
     if (response.status === 400 || response.status === 413) {
       error.textContent = '1,024바이트 이하의 HTTP 또는 HTTPS 주소를 입력해 주세요.';
       input.setAttribute('aria-invalid', 'true');
@@ -59,7 +82,10 @@ form.addEventListener('submit', async (event) => {
     if (!response.ok || response.headers.get('content-type') !== 'image/png') {
       throw new Error('QR response unavailable');
     }
-    imageUrl = URL.createObjectURL(await response.blob());
+    const blob = await response.blob();
+    if (pendingRequest !== request) return;
+
+    imageUrl = URL.createObjectURL(blob);
     image.src = imageUrl;
     empty.hidden = true;
     image.hidden = false;
@@ -67,14 +93,17 @@ form.addEventListener('submit', async (event) => {
     download.hidden = false;
     status.textContent = 'QR 코드가 생성되었습니다.';
   } catch {
-    error.textContent = 'QR 코드를 생성하지 못했습니다. 잠시 후 다시 시도해 주세요.';
+    if (pendingRequest === request) {
+      error.textContent = 'QR 코드를 생성하지 못했습니다. 잠시 후 다시 시도해 주세요.';
+    }
   } finally {
-    generate.disabled = false;
-    generate.textContent = 'QR 생성';
-    preview.removeAttribute('aria-busy');
+    clearTimeout(timeout);
+    if (pendingRequest === request) {
+      pendingRequest = undefined;
+      setGenerating(false);
+    }
   }
 });
-
 
 const api = document.querySelector('#api');
 const example = document.querySelector('#api-example code');

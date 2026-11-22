@@ -1,0 +1,9 @@
+services:
+  link-qr:
+    image: ghcr.io/litanbid/link-qr:${LINK_QR_VERSION:-0.1.0}
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${LINK_QR_PORT:-3000}:3000"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]

@@ -33,13 +33,18 @@ link-qr serve
 
 ## Docker와 홈서버
 
+공개 이미지로 설치하려면 [compose.release.yaml](compose.release.yaml)만 내려받아 실행합니다.
+
 ```sh
-docker compose up -d --build --wait
+docker compose -f compose.release.yaml pull
+docker compose -f compose.release.yaml up -d --wait
 ```
+
+기본 이미지는 `ghcr.io/litanbid/link-qr:0.1.0`이며 `linux/amd64`와 `linux/arm64`를 제공합니다. 버전을 바꾸려면 `LINK_QR_VERSION`을 설정합니다. 소스에서 직접 빌드하려면 저장소를 내려받은 뒤 `docker compose up -d --build --wait`를 실행합니다.
 
 Compose의 호스트 포트는 기본 `127.0.0.1:3000`입니다. 다른 서비스가 이미 사용한다면 `LINK_QR_PORT`를 변경하세요. 인터넷에서 연결하려면 전용 서브도메인에서 HTTPS 프록시로 이 포트에 연결하세요. 프록시가 별도 컨테이너라면 두 서비스를 공유 네트워크에 연결하고 내부의 `link-qr:3000`으로 전달할 수 있습니다.
 
-웹 화면과 API는 로그인 없이 사용할 수 있습니다. 공개 운영 시 프록시에서 `POST /api/v1/qr`의 클라이언트별 호출 빈도를 제한하고, 요청 본문과 QR 응답의 로깅 및 캐시를 꺼 주세요. 프록시 뒤의 앱 포트는 내부에서만 연결하세요. 상태 확인은 `GET /healthz`를 사용합니다.
+웹 화면과 API는 로그인 없이 사용할 수 있습니다. 공개 운영 시 프록시에서 `POST /api/v1/qr`의 클라이언트별 호출 빈도를 제한하고, 요청 본문과 QR 응답의 로깅 및 캐시를 꺼 주세요. 프록시 뒤의 앱 포트는 내부에서만 연결하세요. 상태 확인은 `GET /healthz`를 사용합니다. [nginx 설정 예제](deploy/nginx.example.conf)에는 HTTPS와 IP당 분당 30회 제한을 함께 설정하는 방법이 있습니다.
 
 ## API
 
