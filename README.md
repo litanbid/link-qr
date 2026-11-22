@@ -42,7 +42,7 @@ docker compose -f compose.release.yaml pull
 docker compose -f compose.release.yaml up -d --wait
 ```
 
-기본 이미지는 `ghcr.io/litanbid/link-qr:0.1.0`이며 `linux/amd64`와 `linux/arm64`를 제공합니다. 버전을 바꾸려면 `LINK_QR_VERSION`을 설정합니다. 소스에서 직접 빌드하려면 저장소를 내려받은 뒤 `docker compose up -d --build --wait`를 실행합니다.
+기본 이미지는 `ghcr.io/litanbid/link-qr:0.1.0`이며 `linux/amd64`와 `linux/arm64`를 제공합니다. 버전을 바꾸려면 `LINK_QR_VERSION`을 설정합니다. 새 정식 버전을 따라가려면 `LINK_QR_VERSION=latest`를 설정하고, 업데이트할 때 이미지를 다시 내려받아 스택을 재배포합니다. 소스에서 직접 빌드하려면 저장소를 내려받은 뒤 `docker compose up -d --build --wait`를 실행합니다.
 
 Compose의 호스트 포트는 기본 `127.0.0.1:3000`입니다. 다른 서비스가 이미 사용한다면 `LINK_QR_PORT`를 변경하세요. 인터넷에서 연결하려면 전용 서브도메인에서 HTTPS 프록시로 이 포트에 연결하세요. 프록시가 별도 컨테이너라면 두 서비스를 공유 네트워크에 연결하고 내부의 `link-qr:3000`으로 전달할 수 있습니다.
 
